@@ -135,9 +135,11 @@ class Body:
         self.mass = mass
         self.radius = radius
         self.atmo_radius = atmo_radius
+        self.total_radius = self.radius + self.atmo_radius
         self.active = active
 
         self.color = color
+        self.atmo_color = (np.array(self.color) * 0.05).astype(int)
 
         self.cell = (-1, -1)
         self.neighbors = []
@@ -164,6 +166,10 @@ class Body:
         else:
             self.select()
 
+    def set_atmo_radius(self, atmo_radius):
+        self.atmo_radius = atmo_radius
+        self.total_radius = self.radius + self.atmo_radius
+
     def gravity(self, p2, dt):
         if self.active and p2.active:
             dr = p2.pos - self.pos
@@ -171,6 +177,13 @@ class Body:
             r_norm = normalize(dr)
             g_acc = G * p2.mass / r2 * r_norm
             self.add_acceleration(g_acc, dt)
+
+    def in_atmosphere(self, p2):
+        d = dist(self.pos, p2.pos)
+        if p2.radius <= d <= p2.total_radius:
+            percent_atmosphere = (d-p2.radius) / p2.atmo_radius
+            A = np.exp(-.02 / percent_atmosphere)
+            self.vel = self.vel * A
 
     def add_acceleration(self, a, dt):
         self.vel += a*dt
@@ -199,22 +212,10 @@ class Body:
         self.vel = scale_vec(self.vel, np.sqrt(2*energy/self.mass))
 
     def draw(self, surface):
+        pygame.draw.circle(surface, self.atmo_color,
+                           self.pos.astype(int), self.radius + self.atmo_radius)
         pygame.draw.circle(surface, self.color,
                            self.pos.astype(int), self.radius)
-
-    def wall_collision(self, w, dt):
-        if w.active:
-            next_pos = self.pos + self.vel*dt
-            a, b, _ =  intersection(self.pos[0], next_pos[0], w.start[0], w.end[0],
-                                    self.pos[1], next_pos[1], w.start[1], w.end[1])
-            if 0 <= a <= 1 and 0 <= b <= 1:
-                if distance_point_wall(next_pos, w) <= self.radius:
-                    # Change velocity vector according to equation
-                    self.vel = self.vel - 2 * (np.dot(self.vel, w.normal)) * w.normal
-                    return True
-        return False
-
-
 
 
 ##################
@@ -245,6 +246,8 @@ mouse_status = -1
 
 planet_radius = 10
 
+SUN_ATMOSHPHERE = False
+
 
 ######################
 # Physics parameters #
@@ -274,6 +277,7 @@ star = Body(id = 0,
             pos = center,
             mass = 1E3,
             radius = 100,
+            atmo_radius = 0,
             color = [255, 160, 0])
 
 planets = []
@@ -295,6 +299,13 @@ while run:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_q:
                 run = False
+            if event.key == pygame.K_a:
+                SUN_ATMOSHPHERE = not (SUN_ATMOSHPHERE)
+                if SUN_ATMOSHPHERE:
+                    star.set_atmo_radius(100)
+                else:
+                    star.set_atmo_radius(0)
+
         if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
             # Cycle between 3 possible mouse states
             mouse_status = (mouse_status + 1) % 2
@@ -326,11 +337,14 @@ while run:
     # Physics
     for p in planets:
         p.gravity(star, dt)
+        p.in_atmosphere(star)
     #star.gravity(p1, dt)
 
     # Move
     for p in planets:
         p.move(dt)
+        if dist(p.pos, star.pos) <= p.radius + star.radius:
+            planets.remove(p)
     #star.move(dt)
 
     # Draw
