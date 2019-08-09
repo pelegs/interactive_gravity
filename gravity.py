@@ -36,8 +36,8 @@ def rotate(vec, angle):
     """
     returns vector rotated by angle
     """
-    c = cos(angle)
-    s = sin(angle)
+    c = np.cos(angle)
+    s = np.sin(angle)
     mat = np.array([[c, -s],
                     [s,  c]])
     return np.dot(mat, vec)
@@ -73,10 +73,52 @@ def dist(p1, p2):
 def cross(v1, v2):
     return (v1[0]*v2[1] - v1[1]*v2[0])
 
-def distance_point_wall(p, wall):
-    AP = p - wall.start
-    u = wall.dir
-    return np.abs(cross(AP, u))
+def orbital_params(x, X, v, m, M):
+    # Distance
+    dr = x - X
+    r = dist(x, X)
+
+    # Velocity squared
+    #dv = v - V
+    #dv2 = np.dot(dv, dv)
+    v2 = np.dot(v, v)
+
+    # Reduced mass
+    mu = G*(m + M)
+
+    # Specific orbital energy
+    E = v2/2 - mu/r
+
+    # Specific relative angular momentum
+    h = cross(dr, v)
+
+    # Eccentricity
+    e = np.sqrt(1 + 2*E*h**2/mu**2)
+
+    # Major axis
+    a = -mu/(2*E)
+
+    # Minor axis
+    b = a * np.sqrt(1-e**2)
+
+    return e, a, b
+
+
+def get_ellipse(x, X, v, m, M,
+                center, num_points=1000):
+    e, a, b = orbital_params(x, X, v, m, M)
+    angle = get_angle(x - X)
+    points = np.zeros((num_points, 2))
+    ts = np.linspace(0, 2*np.pi, num_points)
+    for i in range(num_points):
+        c = np.cos(ts[i])
+        s = np.sin(ts[i])
+        r = 2*a*b/np.sqrt((2*b*c)**2+(a*s)**2)
+        points[i][0] = r * c
+        points[i][1] = r * s
+        points[i] = rotate(points[i], -angle) + center
+
+    return points
 
 
 ###########
@@ -143,6 +185,14 @@ class Body:
 
         self.cell = (-1, -1)
         self.neighbors = []
+
+        self.points = np.zeros((1,2))
+
+    def create_ellipse(self, star):
+        self.points = get_ellipse(self.pos, star.pos,
+                                  self.vel,
+                                  self.mass, star.mass,
+                                  star.pos)
 
     def set_cell(self, x, y):
         self.cell = (x, y)
@@ -216,6 +266,11 @@ class Body:
                            self.pos.astype(int), self.radius + self.atmo_radius)
         pygame.draw.circle(surface, self.color,
                            self.pos.astype(int), self.radius)
+
+        for point in self.points:
+            if not (np.isnan(point[0]) or np.isnan(point[1])):
+                pygame.draw.circle(screen, [255, 255, 255],
+                                   point.astype(int), 3)
 
 
 ##################
@@ -322,6 +377,7 @@ while run:
             if mouse_status == SET_VELOCITY:
                 new_planet.vel = np.array(mouse_pos) - new_planet.pos
                 new_planet.active = True
+                new_planet.create_ellipse(star)
 
         if event.type == pygame.MOUSEBUTTONDOWN:
             if 2 <= planet_radius <= 20:
