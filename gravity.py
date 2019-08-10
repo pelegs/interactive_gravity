@@ -32,6 +32,9 @@ def get_angle(vec):
     angle = np.arctan2(vec[1], vec[0])
     return np.degrees(angle)
 
+def get_angle_between(v1, v2):
+    return get_angle(v1) - get_angle(v2)
+
 def rotate(vec, angle):
     """
     returns vector rotated by angle
@@ -79,12 +82,10 @@ def orbital_params(x, X, v, m, M):
     r = dist(x, X)
 
     # Velocity squared
-    #dv = v - V
-    #dv2 = np.dot(dv, dv)
     v2 = np.dot(v, v)
 
     # Reduced mass
-    mu = G*(m + M)
+    mu = G*M
 
     # Specific orbital energy
     E = v2/2 - mu/r
@@ -96,12 +97,22 @@ def orbital_params(x, X, v, m, M):
     e = np.sqrt(1 + 2*E*h**2/mu**2)
 
     # Major axis
-    a = -mu/(2*E)
+    a = mu*r / (2*mu - r*v2)
 
     # Minor axis
     b = a * np.sqrt(1-e**2)
 
-    return e, a, b
+    # Position of second focus
+    perp_vec = rotate(v, np.pi/2)
+    da = get_angle_between(dr, perp_vec)
+    r2 = rotate(dr, 2*da)
+    r2 = scale_vec(r2, 2*a-r)
+    f2 = x + r2
+
+    # Angle of major axis
+    angle = get_angle(f2 - X)
+
+    return e, a, b, angle
 
 
 def get_ellipse(x, X, v, m, M,
@@ -186,13 +197,22 @@ class Body:
         self.cell = (-1, -1)
         self.neighbors = []
 
-        self.points = np.zeros((1,2))
+        self.ellipse_surf = None
 
     def create_ellipse(self, star):
-        self.points = get_ellipse(self.pos, star.pos,
-                                  self.vel,
-                                  self.mass, star.mass,
-                                  star.pos)
+        e, a, b, angle = orbital_params(self.pos, star.pos,
+                                        self.vel,
+                                        self.mass, star.mass)
+        e = e
+        a = a
+        b = b
+        orbit_angle = np.degrees(angle)
+
+        self.focus = (star.pos[0]-a*(1+e), star.pos[1]-b)
+        new_surf = pygame.Surface((2*a, 2*b))
+        pygame.draw.ellipse(new_surf, [255, 255, 255],
+                            (0, 0, 2*a, 2*b), 3)
+        self.ellipse_surf = pygame.transform.rotate(new_surf, orbit_angle)
 
     def set_cell(self, x, y):
         self.cell = (x, y)
@@ -262,15 +282,14 @@ class Body:
         self.vel = scale_vec(self.vel, np.sqrt(2*energy/self.mass))
 
     def draw(self, surface):
+        if self.ellipse_surf:
+            surface.blit(self.ellipse_surf, self.focus)
+
         pygame.draw.circle(surface, self.atmo_color,
                            self.pos.astype(int), self.radius + self.atmo_radius)
         pygame.draw.circle(surface, self.color,
                            self.pos.astype(int), self.radius)
 
-        for point in self.points:
-            if not (np.isnan(point[0]) or np.isnan(point[1])):
-                pygame.draw.circle(screen, [255, 255, 255],
-                                   point.astype(int), 3)
 
 
 ##################
@@ -405,12 +424,12 @@ while run:
 
     # Draw
     screen.fill(3*[0])
-    star.draw(screen)
     for p in planets:
         p.draw(screen)
     draw_mouse(screen,
                old_mouse_pos=old_mouse_pos,
                width=2)
+    star.draw(screen)
 
     # Update screen
     pygame.display.update()
