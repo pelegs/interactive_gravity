@@ -74,8 +74,11 @@ class Body:
         self.neighbors = []
 
         self.points = np.ones((2, 2))*-1
+        self.eccentricity = -1
 
     def create_ellipse(self, star):
+        self.eccentricity = eccentricity(self, star, G)
+
         r1 = self.pos - star.pos
         perp_vec = py_rotate(self.vel, np.pi/2)
         a, b = ellipse_axes(self, star, G)
@@ -89,7 +92,7 @@ class Body:
         second_center = self.pos + r2
         r12_angle = get_angle(second_center - star.pos)
         ellipse_center = 0.5*(star.pos + second_center)
-        self.points = get_ellipse(ellipse_center, a, b, r12_angle, 1000)
+        self.points = get_ellipse(ellipse_center, a, b, r12_angle, 300)
 
     def set_cell(self, x, y):
         self.cell = (x, y)
@@ -189,6 +192,27 @@ def draw_mouse(surface,
                          width)
 
 
+#####################
+# Initialize pygame #
+#####################
+
+w, h = 1200, 1000
+center = np.array([w/2, h/2])
+pygame.display.init()
+screen = pygame.display.set_mode((w, h))
+
+pygame.font.init()
+
+
+###################
+# On-screen texts #
+###################
+
+eccentricity_text = TextOnScreen(pos=(10, 0),
+                                 color=(0, 250, 120),
+                                 text='eccentricity: -')
+
+
 ####################
 # Status variables #
 ####################
@@ -208,18 +232,6 @@ SUN_ATMOSHPHERE = False
 
 dt = 0.01
 G = 0.5E4
-
-
-#####################
-# Initialize pygame #
-#####################
-
-w, h = 1200, 1000
-center = np.array([w/2, h/2])
-pygame.display.init()
-screen = pygame.display.set_mode((w, h))
-
-pygame.font.init()
 
 
 #####################
@@ -245,6 +257,7 @@ mpos = []
 frame_num = 0
 mouse_pos = (0,0)
 original_pos = (0,0)
+eccentricity_val = -1
 while run:
     # Input events
     for event in pygame.event.get():
@@ -259,6 +272,8 @@ while run:
                     star.set_atmo_radius(100)
                 else:
                     star.set_atmo_radius(0)
+            if event.key == pygame.K_d:
+                planets = []
 
         if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
             # Cycle between 3 possible mouse states
@@ -292,6 +307,7 @@ while run:
     if mouse_status == PLACE_PLANET and mouse_pos != old_mouse_pos:
         new_planet.vel = mouse_pos - new_planet.pos
         new_planet.create_ellipse(star)
+        eccentricity_val = new_planet.eccentricity
 
     # Physics
     for p in planets:
@@ -312,6 +328,10 @@ while run:
     draw_mouse(screen,
                original_pos=original_pos,
                width=2)
+
+    # Update text on screen
+    eccentricity_text.set_text('eccentricity: {:0.2f}'.format(eccentricity_val))
+    eccentricity_text.display(screen)
 
     # Update screen
     pygame.display.update()

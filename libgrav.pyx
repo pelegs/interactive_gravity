@@ -234,7 +234,10 @@ def ellipse_axes(small, large, G):
     return a, b
 
 def eccentricity(small, large, G):
-    return c_eccentricity(small.pos, large.pos, small.vel, large.vel, 1.0, large.mass, G)
+    return c_eccentricity(small.pos, large.pos,
+                          small.vel, large.vel,
+                          small.mass, large.mass,
+                          G)
 
 def get_angle(vec):
     x_axis = np.array([1, 0]).astype(np.float64)

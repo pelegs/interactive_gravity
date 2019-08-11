@@ -5795,8 +5795,8 @@ static PyObject *__pyx_pf_7libgrav_4ellipse_axes(CYTHON_UNUSED PyObject *__pyx_s
  *     return a, b
  * 
  * def eccentricity(small, large, G):             # <<<<<<<<<<<<<<
- *     return c_eccentricity(small.pos, large.pos, small.vel, large.vel, 1.0, large.mass, G)
- * 
+ *     return c_eccentricity(small.pos, large.pos,
+ *                           small.vel, large.vel,
  */
 
 /* Python wrapper */
@@ -5882,14 +5882,15 @@ static PyObject *__pyx_pf_7libgrav_6eccentricity(CYTHON_UNUSED PyObject *__pyx_s
   PyObject *__pyx_t_5 = NULL;
   double __pyx_t_6;
   double __pyx_t_7;
+  double __pyx_t_8;
   __Pyx_RefNannySetupContext("eccentricity", 0);
 
   /* "libgrav.pyx":237
  * 
  * def eccentricity(small, large, G):
- *     return c_eccentricity(small.pos, large.pos, small.vel, large.vel, 1.0, large.mass, G)             # <<<<<<<<<<<<<<
- * 
- * def get_angle(vec):
+ *     return c_eccentricity(small.pos, large.pos,             # <<<<<<<<<<<<<<
+ *                           small.vel, large.vel,
+ *                           small.mass, large.mass,
  */
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_small, __pyx_n_s_pos); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 237, __pyx_L1_error)
@@ -5898,18 +5899,54 @@ static PyObject *__pyx_pf_7libgrav_6eccentricity(CYTHON_UNUSED PyObject *__pyx_s
   __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_large, __pyx_n_s_pos); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 237, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   if (!(likely(((__pyx_t_2) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_2, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 237, __pyx_L1_error)
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_small, __pyx_n_s_vel); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 237, __pyx_L1_error)
+
+  /* "libgrav.pyx":238
+ * def eccentricity(small, large, G):
+ *     return c_eccentricity(small.pos, large.pos,
+ *                           small.vel, large.vel,             # <<<<<<<<<<<<<<
+ *                           small.mass, large.mass,
+ *                           G)
+ */
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_small, __pyx_n_s_vel); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 238, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (!(likely(((__pyx_t_3) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_3, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 237, __pyx_L1_error)
-  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_large, __pyx_n_s_vel); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 237, __pyx_L1_error)
+  if (!(likely(((__pyx_t_3) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_3, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 238, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_large, __pyx_n_s_vel); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 238, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  if (!(likely(((__pyx_t_4) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_4, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 237, __pyx_L1_error)
-  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_large, __pyx_n_s_mass); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 237, __pyx_L1_error)
+  if (!(likely(((__pyx_t_4) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_4, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 238, __pyx_L1_error)
+
+  /* "libgrav.pyx":239
+ *     return c_eccentricity(small.pos, large.pos,
+ *                           small.vel, large.vel,
+ *                           small.mass, large.mass,             # <<<<<<<<<<<<<<
+ *                           G)
+ * 
+ */
+  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_small, __pyx_n_s_mass); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 239, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
-  __pyx_t_6 = __pyx_PyFloat_AsDouble(__pyx_t_5); if (unlikely((__pyx_t_6 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 237, __pyx_L1_error)
+  __pyx_t_6 = __pyx_PyFloat_AsDouble(__pyx_t_5); if (unlikely((__pyx_t_6 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 239, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-  __pyx_t_7 = __pyx_PyFloat_AsDouble(__pyx_v_G); if (unlikely((__pyx_t_7 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 237, __pyx_L1_error)
-  __pyx_t_5 = PyFloat_FromDouble(__pyx_f_7libgrav_c_eccentricity(((PyArrayObject *)__pyx_t_1), ((PyArrayObject *)__pyx_t_2), ((PyArrayObject *)__pyx_t_3), ((PyArrayObject *)__pyx_t_4), 1.0, __pyx_t_6, __pyx_t_7)); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 237, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_large, __pyx_n_s_mass); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 239, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_5);
+  __pyx_t_7 = __pyx_PyFloat_AsDouble(__pyx_t_5); if (unlikely((__pyx_t_7 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 239, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+
+  /* "libgrav.pyx":240
+ *                           small.vel, large.vel,
+ *                           small.mass, large.mass,
+ *                           G)             # <<<<<<<<<<<<<<
+ * 
+ * def get_angle(vec):
+ */
+  __pyx_t_8 = __pyx_PyFloat_AsDouble(__pyx_v_G); if (unlikely((__pyx_t_8 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 240, __pyx_L1_error)
+
+  /* "libgrav.pyx":237
+ * 
+ * def eccentricity(small, large, G):
+ *     return c_eccentricity(small.pos, large.pos,             # <<<<<<<<<<<<<<
+ *                           small.vel, large.vel,
+ *                           small.mass, large.mass,
+ */
+  __pyx_t_5 = PyFloat_FromDouble(__pyx_f_7libgrav_c_eccentricity(((PyArrayObject *)__pyx_t_1), ((PyArrayObject *)__pyx_t_2), ((PyArrayObject *)__pyx_t_3), ((PyArrayObject *)__pyx_t_4), __pyx_t_6, __pyx_t_7, __pyx_t_8)); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 237, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
@@ -5923,8 +5960,8 @@ static PyObject *__pyx_pf_7libgrav_6eccentricity(CYTHON_UNUSED PyObject *__pyx_s
  *     return a, b
  * 
  * def eccentricity(small, large, G):             # <<<<<<<<<<<<<<
- *     return c_eccentricity(small.pos, large.pos, small.vel, large.vel, 1.0, large.mass, G)
- * 
+ *     return c_eccentricity(small.pos, large.pos,
+ *                           small.vel, large.vel,
  */
 
   /* function exit code */
@@ -5942,8 +5979,8 @@ static PyObject *__pyx_pf_7libgrav_6eccentricity(CYTHON_UNUSED PyObject *__pyx_s
   return __pyx_r;
 }
 
-/* "libgrav.pyx":239
- *     return c_eccentricity(small.pos, large.pos, small.vel, large.vel, 1.0, large.mass, G)
+/* "libgrav.pyx":242
+ *                           G)
  * 
  * def get_angle(vec):             # <<<<<<<<<<<<<<
  *     x_axis = np.array([1, 0]).astype(np.float64)
@@ -5976,19 +6013,19 @@ static PyObject *__pyx_pf_7libgrav_8get_angle(CYTHON_UNUSED PyObject *__pyx_self
   PyObject *__pyx_t_6 = NULL;
   __Pyx_RefNannySetupContext("get_angle", 0);
 
-  /* "libgrav.pyx":240
+  /* "libgrav.pyx":243
  * 
  * def get_angle(vec):
  *     x_axis = np.array([1, 0]).astype(np.float64)             # <<<<<<<<<<<<<<
  *     return angle_between(vec, x_axis)
  * 
  */
-  __pyx_t_3 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 240, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 243, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_array); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 240, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_array); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 243, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_3 = PyList_New(2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 240, __pyx_L1_error)
+  __pyx_t_3 = PyList_New(2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 243, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_INCREF(__pyx_int_1);
   __Pyx_GIVEREF(__pyx_int_1);
@@ -6007,14 +6044,14 @@ static PyObject *__pyx_pf_7libgrav_8get_angle(CYTHON_UNUSED PyObject *__pyx_self
     }
   }
   if (!__pyx_t_5) {
-    __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 240, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 243, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_GOTREF(__pyx_t_2);
   } else {
     #if CYTHON_FAST_PYCALL
     if (PyFunction_Check(__pyx_t_4)) {
       PyObject *__pyx_temp[2] = {__pyx_t_5, __pyx_t_3};
-      __pyx_t_2 = __Pyx_PyFunction_FastCall(__pyx_t_4, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 240, __pyx_L1_error)
+      __pyx_t_2 = __Pyx_PyFunction_FastCall(__pyx_t_4, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 243, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -6023,31 +6060,31 @@ static PyObject *__pyx_pf_7libgrav_8get_angle(CYTHON_UNUSED PyObject *__pyx_self
     #if CYTHON_FAST_PYCCALL
     if (__Pyx_PyFastCFunction_Check(__pyx_t_4)) {
       PyObject *__pyx_temp[2] = {__pyx_t_5, __pyx_t_3};
-      __pyx_t_2 = __Pyx_PyCFunction_FastCall(__pyx_t_4, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 240, __pyx_L1_error)
+      __pyx_t_2 = __Pyx_PyCFunction_FastCall(__pyx_t_4, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 243, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     } else
     #endif
     {
-      __pyx_t_6 = PyTuple_New(1+1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 240, __pyx_L1_error)
+      __pyx_t_6 = PyTuple_New(1+1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 243, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_6);
       __Pyx_GIVEREF(__pyx_t_5); PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_t_5); __pyx_t_5 = NULL;
       __Pyx_GIVEREF(__pyx_t_3);
       PyTuple_SET_ITEM(__pyx_t_6, 0+1, __pyx_t_3);
       __pyx_t_3 = 0;
-      __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_6, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 240, __pyx_L1_error)
+      __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_6, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 243, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     }
   }
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_astype); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 240, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_astype); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 243, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 240, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 243, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_float64); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 240, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_float64); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 243, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_t_2 = NULL;
@@ -6061,14 +6098,14 @@ static PyObject *__pyx_pf_7libgrav_8get_angle(CYTHON_UNUSED PyObject *__pyx_self
     }
   }
   if (!__pyx_t_2) {
-    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_6); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 240, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_6); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 243, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     __Pyx_GOTREF(__pyx_t_1);
   } else {
     #if CYTHON_FAST_PYCALL
     if (PyFunction_Check(__pyx_t_4)) {
       PyObject *__pyx_temp[2] = {__pyx_t_2, __pyx_t_6};
-      __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_4, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 240, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_4, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 243, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
@@ -6077,20 +6114,20 @@ static PyObject *__pyx_pf_7libgrav_8get_angle(CYTHON_UNUSED PyObject *__pyx_self
     #if CYTHON_FAST_PYCCALL
     if (__Pyx_PyFastCFunction_Check(__pyx_t_4)) {
       PyObject *__pyx_temp[2] = {__pyx_t_2, __pyx_t_6};
-      __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_4, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 240, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_4, __pyx_temp+1-1, 1+1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 243, __pyx_L1_error)
       __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     } else
     #endif
     {
-      __pyx_t_3 = PyTuple_New(1+1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 240, __pyx_L1_error)
+      __pyx_t_3 = PyTuple_New(1+1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 243, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
       __Pyx_GIVEREF(__pyx_t_2); PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_t_2); __pyx_t_2 = NULL;
       __Pyx_GIVEREF(__pyx_t_6);
       PyTuple_SET_ITEM(__pyx_t_3, 0+1, __pyx_t_6);
       __pyx_t_6 = 0;
-      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_3, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 240, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_3, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 243, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     }
@@ -6099,7 +6136,7 @@ static PyObject *__pyx_pf_7libgrav_8get_angle(CYTHON_UNUSED PyObject *__pyx_self
   __pyx_v_x_axis = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "libgrav.pyx":241
+  /* "libgrav.pyx":244
  * def get_angle(vec):
  *     x_axis = np.array([1, 0]).astype(np.float64)
  *     return angle_between(vec, x_axis)             # <<<<<<<<<<<<<<
@@ -6107,16 +6144,16 @@ static PyObject *__pyx_pf_7libgrav_8get_angle(CYTHON_UNUSED PyObject *__pyx_self
  * def py_angle_between(v1, v2):
  */
   __Pyx_XDECREF(__pyx_r);
-  if (!(likely(((__pyx_v_vec) == Py_None) || likely(__Pyx_TypeTest(__pyx_v_vec, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 241, __pyx_L1_error)
-  if (!(likely(((__pyx_v_x_axis) == Py_None) || likely(__Pyx_TypeTest(__pyx_v_x_axis, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 241, __pyx_L1_error)
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_7libgrav_angle_between(((PyArrayObject *)__pyx_v_vec), ((PyArrayObject *)__pyx_v_x_axis))); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 241, __pyx_L1_error)
+  if (!(likely(((__pyx_v_vec) == Py_None) || likely(__Pyx_TypeTest(__pyx_v_vec, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 244, __pyx_L1_error)
+  if (!(likely(((__pyx_v_x_axis) == Py_None) || likely(__Pyx_TypeTest(__pyx_v_x_axis, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 244, __pyx_L1_error)
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_7libgrav_angle_between(((PyArrayObject *)__pyx_v_vec), ((PyArrayObject *)__pyx_v_x_axis))); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 244, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "libgrav.pyx":239
- *     return c_eccentricity(small.pos, large.pos, small.vel, large.vel, 1.0, large.mass, G)
+  /* "libgrav.pyx":242
+ *                           G)
  * 
  * def get_angle(vec):             # <<<<<<<<<<<<<<
  *     x_axis = np.array([1, 0]).astype(np.float64)
@@ -6140,7 +6177,7 @@ static PyObject *__pyx_pf_7libgrav_8get_angle(CYTHON_UNUSED PyObject *__pyx_self
   return __pyx_r;
 }
 
-/* "libgrav.pyx":243
+/* "libgrav.pyx":246
  *     return angle_between(vec, x_axis)
  * 
  * def py_angle_between(v1, v2):             # <<<<<<<<<<<<<<
@@ -6180,11 +6217,11 @@ static PyObject *__pyx_pw_7libgrav_11py_angle_between(PyObject *__pyx_self, PyOb
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_v2)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("py_angle_between", 1, 2, 2, 1); __PYX_ERR(0, 243, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("py_angle_between", 1, 2, 2, 1); __PYX_ERR(0, 246, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "py_angle_between") < 0)) __PYX_ERR(0, 243, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "py_angle_between") < 0)) __PYX_ERR(0, 246, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -6197,7 +6234,7 @@ static PyObject *__pyx_pw_7libgrav_11py_angle_between(PyObject *__pyx_self, PyOb
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("py_angle_between", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 243, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("py_angle_between", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 246, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("libgrav.py_angle_between", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -6216,7 +6253,7 @@ static PyObject *__pyx_pf_7libgrav_10py_angle_between(CYTHON_UNUSED PyObject *__
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("py_angle_between", 0);
 
-  /* "libgrav.pyx":244
+  /* "libgrav.pyx":247
  * 
  * def py_angle_between(v1, v2):
  *     return angle_between(v1, v2)             # <<<<<<<<<<<<<<
@@ -6224,15 +6261,15 @@ static PyObject *__pyx_pf_7libgrav_10py_angle_between(CYTHON_UNUSED PyObject *__
  * def clockwise(v1, v2):
  */
   __Pyx_XDECREF(__pyx_r);
-  if (!(likely(((__pyx_v_v1) == Py_None) || likely(__Pyx_TypeTest(__pyx_v_v1, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 244, __pyx_L1_error)
-  if (!(likely(((__pyx_v_v2) == Py_None) || likely(__Pyx_TypeTest(__pyx_v_v2, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 244, __pyx_L1_error)
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_7libgrav_angle_between(((PyArrayObject *)__pyx_v_v1), ((PyArrayObject *)__pyx_v_v2))); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 244, __pyx_L1_error)
+  if (!(likely(((__pyx_v_v1) == Py_None) || likely(__Pyx_TypeTest(__pyx_v_v1, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 247, __pyx_L1_error)
+  if (!(likely(((__pyx_v_v2) == Py_None) || likely(__Pyx_TypeTest(__pyx_v_v2, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 247, __pyx_L1_error)
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_7libgrav_angle_between(((PyArrayObject *)__pyx_v_v1), ((PyArrayObject *)__pyx_v_v2))); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 247, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "libgrav.pyx":243
+  /* "libgrav.pyx":246
  *     return angle_between(vec, x_axis)
  * 
  * def py_angle_between(v1, v2):             # <<<<<<<<<<<<<<
@@ -6251,7 +6288,7 @@ static PyObject *__pyx_pf_7libgrav_10py_angle_between(CYTHON_UNUSED PyObject *__
   return __pyx_r;
 }
 
-/* "libgrav.pyx":246
+/* "libgrav.pyx":249
  *     return angle_between(v1, v2)
  * 
  * def clockwise(v1, v2):             # <<<<<<<<<<<<<<
@@ -6291,11 +6328,11 @@ static PyObject *__pyx_pw_7libgrav_13clockwise(PyObject *__pyx_self, PyObject *_
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_v2)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("clockwise", 1, 2, 2, 1); __PYX_ERR(0, 246, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("clockwise", 1, 2, 2, 1); __PYX_ERR(0, 249, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "clockwise") < 0)) __PYX_ERR(0, 246, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "clockwise") < 0)) __PYX_ERR(0, 249, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -6308,7 +6345,7 @@ static PyObject *__pyx_pw_7libgrav_13clockwise(PyObject *__pyx_self, PyObject *_
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("clockwise", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 246, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("clockwise", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 249, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("libgrav.clockwise", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -6327,7 +6364,7 @@ static PyObject *__pyx_pf_7libgrav_12clockwise(CYTHON_UNUSED PyObject *__pyx_sel
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("clockwise", 0);
 
-  /* "libgrav.pyx":247
+  /* "libgrav.pyx":250
  * 
  * def clockwise(v1, v2):
  *     return c_clockwise(v1, v2)             # <<<<<<<<<<<<<<
@@ -6335,15 +6372,15 @@ static PyObject *__pyx_pf_7libgrav_12clockwise(CYTHON_UNUSED PyObject *__pyx_sel
  * def make_norm(vec, scale):
  */
   __Pyx_XDECREF(__pyx_r);
-  if (!(likely(((__pyx_v_v1) == Py_None) || likely(__Pyx_TypeTest(__pyx_v_v1, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 247, __pyx_L1_error)
-  if (!(likely(((__pyx_v_v2) == Py_None) || likely(__Pyx_TypeTest(__pyx_v_v2, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 247, __pyx_L1_error)
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_f_7libgrav_c_clockwise(((PyArrayObject *)__pyx_v_v1), ((PyArrayObject *)__pyx_v_v2))); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 247, __pyx_L1_error)
+  if (!(likely(((__pyx_v_v1) == Py_None) || likely(__Pyx_TypeTest(__pyx_v_v1, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 250, __pyx_L1_error)
+  if (!(likely(((__pyx_v_v2) == Py_None) || likely(__Pyx_TypeTest(__pyx_v_v2, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 250, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_f_7libgrav_c_clockwise(((PyArrayObject *)__pyx_v_v1), ((PyArrayObject *)__pyx_v_v2))); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 250, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "libgrav.pyx":246
+  /* "libgrav.pyx":249
  *     return angle_between(v1, v2)
  * 
  * def clockwise(v1, v2):             # <<<<<<<<<<<<<<
@@ -6362,7 +6399,7 @@ static PyObject *__pyx_pf_7libgrav_12clockwise(CYTHON_UNUSED PyObject *__pyx_sel
   return __pyx_r;
 }
 
-/* "libgrav.pyx":249
+/* "libgrav.pyx":252
  *     return c_clockwise(v1, v2)
  * 
  * def make_norm(vec, scale):             # <<<<<<<<<<<<<<
@@ -6402,11 +6439,11 @@ static PyObject *__pyx_pw_7libgrav_15make_norm(PyObject *__pyx_self, PyObject *_
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_scale)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("make_norm", 1, 2, 2, 1); __PYX_ERR(0, 249, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("make_norm", 1, 2, 2, 1); __PYX_ERR(0, 252, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "make_norm") < 0)) __PYX_ERR(0, 249, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "make_norm") < 0)) __PYX_ERR(0, 252, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -6419,7 +6456,7 @@ static PyObject *__pyx_pw_7libgrav_15make_norm(PyObject *__pyx_self, PyObject *_
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("make_norm", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 249, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("make_norm", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 252, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("libgrav.make_norm", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -6440,35 +6477,35 @@ static PyObject *__pyx_pf_7libgrav_14make_norm(CYTHON_UNUSED PyObject *__pyx_sel
   __Pyx_RefNannySetupContext("make_norm", 0);
   __Pyx_INCREF(__pyx_v_vec);
 
-  /* "libgrav.pyx":250
+  /* "libgrav.pyx":253
  * 
  * def make_norm(vec, scale):
  *     vec /= norm(vec)             # <<<<<<<<<<<<<<
  *     vec *= scale
  * 
  */
-  if (!(likely(((__pyx_v_vec) == Py_None) || likely(__Pyx_TypeTest(__pyx_v_vec, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 250, __pyx_L1_error)
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_7libgrav_norm(((PyArrayObject *)__pyx_v_vec))); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 250, __pyx_L1_error)
+  if (!(likely(((__pyx_v_vec) == Py_None) || likely(__Pyx_TypeTest(__pyx_v_vec, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 253, __pyx_L1_error)
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_7libgrav_norm(((PyArrayObject *)__pyx_v_vec))); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 253, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyNumber_InPlaceDivide(__pyx_v_vec, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 250, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyNumber_InPlaceDivide(__pyx_v_vec, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 253, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF_SET(__pyx_v_vec, __pyx_t_2);
   __pyx_t_2 = 0;
 
-  /* "libgrav.pyx":251
+  /* "libgrav.pyx":254
  * def make_norm(vec, scale):
  *     vec /= norm(vec)
  *     vec *= scale             # <<<<<<<<<<<<<<
  * 
  * def py_rotate(vec, angle):
  */
-  __pyx_t_2 = PyNumber_InPlaceMultiply(__pyx_v_vec, __pyx_v_scale); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 251, __pyx_L1_error)
+  __pyx_t_2 = PyNumber_InPlaceMultiply(__pyx_v_vec, __pyx_v_scale); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 254, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF_SET(__pyx_v_vec, __pyx_t_2);
   __pyx_t_2 = 0;
 
-  /* "libgrav.pyx":249
+  /* "libgrav.pyx":252
  *     return c_clockwise(v1, v2)
  * 
  * def make_norm(vec, scale):             # <<<<<<<<<<<<<<
@@ -6491,7 +6528,7 @@ static PyObject *__pyx_pf_7libgrav_14make_norm(CYTHON_UNUSED PyObject *__pyx_sel
   return __pyx_r;
 }
 
-/* "libgrav.pyx":253
+/* "libgrav.pyx":256
  *     vec *= scale
  * 
  * def py_rotate(vec, angle):             # <<<<<<<<<<<<<<
@@ -6531,11 +6568,11 @@ static PyObject *__pyx_pw_7libgrav_17py_rotate(PyObject *__pyx_self, PyObject *_
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_angle)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("py_rotate", 1, 2, 2, 1); __PYX_ERR(0, 253, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("py_rotate", 1, 2, 2, 1); __PYX_ERR(0, 256, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "py_rotate") < 0)) __PYX_ERR(0, 253, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "py_rotate") < 0)) __PYX_ERR(0, 256, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -6548,7 +6585,7 @@ static PyObject *__pyx_pw_7libgrav_17py_rotate(PyObject *__pyx_self, PyObject *_
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("py_rotate", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 253, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("py_rotate", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 256, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("libgrav.py_rotate", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -6568,7 +6605,7 @@ static PyObject *__pyx_pf_7libgrav_16py_rotate(CYTHON_UNUSED PyObject *__pyx_sel
   PyObject *__pyx_t_2 = NULL;
   __Pyx_RefNannySetupContext("py_rotate", 0);
 
-  /* "libgrav.pyx":254
+  /* "libgrav.pyx":257
  * 
  * def py_rotate(vec, angle):
  *     return rotate(vec, angle)             # <<<<<<<<<<<<<<
@@ -6576,15 +6613,15 @@ static PyObject *__pyx_pf_7libgrav_16py_rotate(CYTHON_UNUSED PyObject *__pyx_sel
  * def get_ellipse(center, a, b, angle, num_points=100):
  */
   __Pyx_XDECREF(__pyx_r);
-  if (!(likely(((__pyx_v_vec) == Py_None) || likely(__Pyx_TypeTest(__pyx_v_vec, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 254, __pyx_L1_error)
-  __pyx_t_1 = __pyx_PyFloat_AsDouble(__pyx_v_angle); if (unlikely((__pyx_t_1 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 254, __pyx_L1_error)
-  __pyx_t_2 = ((PyObject *)__pyx_f_7libgrav_rotate(((PyArrayObject *)__pyx_v_vec), __pyx_t_1)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 254, __pyx_L1_error)
+  if (!(likely(((__pyx_v_vec) == Py_None) || likely(__Pyx_TypeTest(__pyx_v_vec, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 257, __pyx_L1_error)
+  __pyx_t_1 = __pyx_PyFloat_AsDouble(__pyx_v_angle); if (unlikely((__pyx_t_1 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 257, __pyx_L1_error)
+  __pyx_t_2 = ((PyObject *)__pyx_f_7libgrav_rotate(((PyArrayObject *)__pyx_v_vec), __pyx_t_1)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 257, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_r = __pyx_t_2;
   __pyx_t_2 = 0;
   goto __pyx_L0;
 
-  /* "libgrav.pyx":253
+  /* "libgrav.pyx":256
  *     vec *= scale
  * 
  * def py_rotate(vec, angle):             # <<<<<<<<<<<<<<
@@ -6603,7 +6640,7 @@ static PyObject *__pyx_pf_7libgrav_16py_rotate(CYTHON_UNUSED PyObject *__pyx_sel
   return __pyx_r;
 }
 
-/* "libgrav.pyx":256
+/* "libgrav.pyx":259
  *     return rotate(vec, angle)
  * 
  * def get_ellipse(center, a, b, angle, num_points=100):             # <<<<<<<<<<<<<<
@@ -6652,19 +6689,19 @@ static PyObject *__pyx_pw_7libgrav_19get_ellipse(PyObject *__pyx_self, PyObject 
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_a)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("get_ellipse", 0, 4, 5, 1); __PYX_ERR(0, 256, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("get_ellipse", 0, 4, 5, 1); __PYX_ERR(0, 259, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_b)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("get_ellipse", 0, 4, 5, 2); __PYX_ERR(0, 256, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("get_ellipse", 0, 4, 5, 2); __PYX_ERR(0, 259, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  3:
         if (likely((values[3] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_angle)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("get_ellipse", 0, 4, 5, 3); __PYX_ERR(0, 256, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("get_ellipse", 0, 4, 5, 3); __PYX_ERR(0, 259, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  4:
@@ -6674,7 +6711,7 @@ static PyObject *__pyx_pw_7libgrav_19get_ellipse(PyObject *__pyx_self, PyObject 
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "get_ellipse") < 0)) __PYX_ERR(0, 256, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "get_ellipse") < 0)) __PYX_ERR(0, 259, __pyx_L3_error)
       }
     } else {
       switch (PyTuple_GET_SIZE(__pyx_args)) {
@@ -6696,7 +6733,7 @@ static PyObject *__pyx_pw_7libgrav_19get_ellipse(PyObject *__pyx_self, PyObject 
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("get_ellipse", 0, 4, 5, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 256, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("get_ellipse", 0, 4, 5, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 259, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("libgrav.get_ellipse", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -6719,24 +6756,24 @@ static PyObject *__pyx_pf_7libgrav_18get_ellipse(CYTHON_UNUSED PyObject *__pyx_s
   PyObject *__pyx_t_5 = NULL;
   __Pyx_RefNannySetupContext("get_ellipse", 0);
 
-  /* "libgrav.pyx":257
+  /* "libgrav.pyx":260
  * 
  * def get_ellipse(center, a, b, angle, num_points=100):
  *     return c_get_ellipse(center, a, b, angle, num_points)             # <<<<<<<<<<<<<<
  */
   __Pyx_XDECREF(__pyx_r);
-  if (!(likely(((__pyx_v_center) == Py_None) || likely(__Pyx_TypeTest(__pyx_v_center, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 257, __pyx_L1_error)
-  __pyx_t_1 = __pyx_PyFloat_AsDouble(__pyx_v_a); if (unlikely((__pyx_t_1 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 257, __pyx_L1_error)
-  __pyx_t_2 = __pyx_PyFloat_AsDouble(__pyx_v_b); if (unlikely((__pyx_t_2 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 257, __pyx_L1_error)
-  __pyx_t_3 = __pyx_PyFloat_AsDouble(__pyx_v_angle); if (unlikely((__pyx_t_3 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 257, __pyx_L1_error)
-  __pyx_t_4 = __Pyx_PyInt_As_int(__pyx_v_num_points); if (unlikely((__pyx_t_4 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 257, __pyx_L1_error)
-  __pyx_t_5 = ((PyObject *)__pyx_f_7libgrav_c_get_ellipse(((PyArrayObject *)__pyx_v_center), __pyx_t_1, __pyx_t_2, __pyx_t_3, __pyx_t_4)); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 257, __pyx_L1_error)
+  if (!(likely(((__pyx_v_center) == Py_None) || likely(__Pyx_TypeTest(__pyx_v_center, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 260, __pyx_L1_error)
+  __pyx_t_1 = __pyx_PyFloat_AsDouble(__pyx_v_a); if (unlikely((__pyx_t_1 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 260, __pyx_L1_error)
+  __pyx_t_2 = __pyx_PyFloat_AsDouble(__pyx_v_b); if (unlikely((__pyx_t_2 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 260, __pyx_L1_error)
+  __pyx_t_3 = __pyx_PyFloat_AsDouble(__pyx_v_angle); if (unlikely((__pyx_t_3 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 260, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyInt_As_int(__pyx_v_num_points); if (unlikely((__pyx_t_4 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 260, __pyx_L1_error)
+  __pyx_t_5 = ((PyObject *)__pyx_f_7libgrav_c_get_ellipse(((PyArrayObject *)__pyx_v_center), __pyx_t_1, __pyx_t_2, __pyx_t_3, __pyx_t_4)); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 260, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __pyx_r = __pyx_t_5;
   __pyx_t_5 = 0;
   goto __pyx_L0;
 
-  /* "libgrav.pyx":256
+  /* "libgrav.pyx":259
  *     return rotate(vec, angle)
  * 
  * def get_ellipse(center, a, b, angle, num_points=100):             # <<<<<<<<<<<<<<
@@ -9517,84 +9554,84 @@ static int __Pyx_InitCachedConstants(void) {
  *     return a, b
  * 
  * def eccentricity(small, large, G):             # <<<<<<<<<<<<<<
- *     return c_eccentricity(small.pos, large.pos, small.vel, large.vel, 1.0, large.mass, G)
- * 
+ *     return c_eccentricity(small.pos, large.pos,
+ *                           small.vel, large.vel,
  */
   __pyx_tuple__21 = PyTuple_Pack(3, __pyx_n_s_small, __pyx_n_s_large, __pyx_n_s_G); if (unlikely(!__pyx_tuple__21)) __PYX_ERR(0, 236, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__21);
   __Pyx_GIVEREF(__pyx_tuple__21);
   __pyx_codeobj__22 = (PyObject*)__Pyx_PyCode_New(3, 0, 3, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__21, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_libgrav_pyx, __pyx_n_s_eccentricity, 236, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__22)) __PYX_ERR(0, 236, __pyx_L1_error)
 
-  /* "libgrav.pyx":239
- *     return c_eccentricity(small.pos, large.pos, small.vel, large.vel, 1.0, large.mass, G)
+  /* "libgrav.pyx":242
+ *                           G)
  * 
  * def get_angle(vec):             # <<<<<<<<<<<<<<
  *     x_axis = np.array([1, 0]).astype(np.float64)
  *     return angle_between(vec, x_axis)
  */
-  __pyx_tuple__23 = PyTuple_Pack(2, __pyx_n_s_vec, __pyx_n_s_x_axis); if (unlikely(!__pyx_tuple__23)) __PYX_ERR(0, 239, __pyx_L1_error)
+  __pyx_tuple__23 = PyTuple_Pack(2, __pyx_n_s_vec, __pyx_n_s_x_axis); if (unlikely(!__pyx_tuple__23)) __PYX_ERR(0, 242, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__23);
   __Pyx_GIVEREF(__pyx_tuple__23);
-  __pyx_codeobj__24 = (PyObject*)__Pyx_PyCode_New(1, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__23, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_libgrav_pyx, __pyx_n_s_get_angle, 239, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__24)) __PYX_ERR(0, 239, __pyx_L1_error)
+  __pyx_codeobj__24 = (PyObject*)__Pyx_PyCode_New(1, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__23, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_libgrav_pyx, __pyx_n_s_get_angle, 242, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__24)) __PYX_ERR(0, 242, __pyx_L1_error)
 
-  /* "libgrav.pyx":243
+  /* "libgrav.pyx":246
  *     return angle_between(vec, x_axis)
  * 
  * def py_angle_between(v1, v2):             # <<<<<<<<<<<<<<
  *     return angle_between(v1, v2)
  * 
  */
-  __pyx_tuple__25 = PyTuple_Pack(2, __pyx_n_s_v1, __pyx_n_s_v2); if (unlikely(!__pyx_tuple__25)) __PYX_ERR(0, 243, __pyx_L1_error)
+  __pyx_tuple__25 = PyTuple_Pack(2, __pyx_n_s_v1, __pyx_n_s_v2); if (unlikely(!__pyx_tuple__25)) __PYX_ERR(0, 246, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__25);
   __Pyx_GIVEREF(__pyx_tuple__25);
-  __pyx_codeobj__26 = (PyObject*)__Pyx_PyCode_New(2, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__25, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_libgrav_pyx, __pyx_n_s_py_angle_between, 243, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__26)) __PYX_ERR(0, 243, __pyx_L1_error)
+  __pyx_codeobj__26 = (PyObject*)__Pyx_PyCode_New(2, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__25, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_libgrav_pyx, __pyx_n_s_py_angle_between, 246, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__26)) __PYX_ERR(0, 246, __pyx_L1_error)
 
-  /* "libgrav.pyx":246
+  /* "libgrav.pyx":249
  *     return angle_between(v1, v2)
  * 
  * def clockwise(v1, v2):             # <<<<<<<<<<<<<<
  *     return c_clockwise(v1, v2)
  * 
  */
-  __pyx_tuple__27 = PyTuple_Pack(2, __pyx_n_s_v1, __pyx_n_s_v2); if (unlikely(!__pyx_tuple__27)) __PYX_ERR(0, 246, __pyx_L1_error)
+  __pyx_tuple__27 = PyTuple_Pack(2, __pyx_n_s_v1, __pyx_n_s_v2); if (unlikely(!__pyx_tuple__27)) __PYX_ERR(0, 249, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__27);
   __Pyx_GIVEREF(__pyx_tuple__27);
-  __pyx_codeobj__28 = (PyObject*)__Pyx_PyCode_New(2, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__27, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_libgrav_pyx, __pyx_n_s_clockwise, 246, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__28)) __PYX_ERR(0, 246, __pyx_L1_error)
+  __pyx_codeobj__28 = (PyObject*)__Pyx_PyCode_New(2, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__27, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_libgrav_pyx, __pyx_n_s_clockwise, 249, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__28)) __PYX_ERR(0, 249, __pyx_L1_error)
 
-  /* "libgrav.pyx":249
+  /* "libgrav.pyx":252
  *     return c_clockwise(v1, v2)
  * 
  * def make_norm(vec, scale):             # <<<<<<<<<<<<<<
  *     vec /= norm(vec)
  *     vec *= scale
  */
-  __pyx_tuple__29 = PyTuple_Pack(2, __pyx_n_s_vec, __pyx_n_s_scale); if (unlikely(!__pyx_tuple__29)) __PYX_ERR(0, 249, __pyx_L1_error)
+  __pyx_tuple__29 = PyTuple_Pack(2, __pyx_n_s_vec, __pyx_n_s_scale); if (unlikely(!__pyx_tuple__29)) __PYX_ERR(0, 252, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__29);
   __Pyx_GIVEREF(__pyx_tuple__29);
-  __pyx_codeobj__30 = (PyObject*)__Pyx_PyCode_New(2, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__29, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_libgrav_pyx, __pyx_n_s_make_norm, 249, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__30)) __PYX_ERR(0, 249, __pyx_L1_error)
+  __pyx_codeobj__30 = (PyObject*)__Pyx_PyCode_New(2, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__29, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_libgrav_pyx, __pyx_n_s_make_norm, 252, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__30)) __PYX_ERR(0, 252, __pyx_L1_error)
 
-  /* "libgrav.pyx":253
+  /* "libgrav.pyx":256
  *     vec *= scale
  * 
  * def py_rotate(vec, angle):             # <<<<<<<<<<<<<<
  *     return rotate(vec, angle)
  * 
  */
-  __pyx_tuple__31 = PyTuple_Pack(2, __pyx_n_s_vec, __pyx_n_s_angle); if (unlikely(!__pyx_tuple__31)) __PYX_ERR(0, 253, __pyx_L1_error)
+  __pyx_tuple__31 = PyTuple_Pack(2, __pyx_n_s_vec, __pyx_n_s_angle); if (unlikely(!__pyx_tuple__31)) __PYX_ERR(0, 256, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__31);
   __Pyx_GIVEREF(__pyx_tuple__31);
-  __pyx_codeobj__32 = (PyObject*)__Pyx_PyCode_New(2, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__31, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_libgrav_pyx, __pyx_n_s_py_rotate, 253, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__32)) __PYX_ERR(0, 253, __pyx_L1_error)
+  __pyx_codeobj__32 = (PyObject*)__Pyx_PyCode_New(2, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__31, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_libgrav_pyx, __pyx_n_s_py_rotate, 256, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__32)) __PYX_ERR(0, 256, __pyx_L1_error)
 
-  /* "libgrav.pyx":256
+  /* "libgrav.pyx":259
  *     return rotate(vec, angle)
  * 
  * def get_ellipse(center, a, b, angle, num_points=100):             # <<<<<<<<<<<<<<
  *     return c_get_ellipse(center, a, b, angle, num_points)
  */
-  __pyx_tuple__33 = PyTuple_Pack(5, __pyx_n_s_center, __pyx_n_s_a, __pyx_n_s_b, __pyx_n_s_angle, __pyx_n_s_num_points); if (unlikely(!__pyx_tuple__33)) __PYX_ERR(0, 256, __pyx_L1_error)
+  __pyx_tuple__33 = PyTuple_Pack(5, __pyx_n_s_center, __pyx_n_s_a, __pyx_n_s_b, __pyx_n_s_angle, __pyx_n_s_num_points); if (unlikely(!__pyx_tuple__33)) __PYX_ERR(0, 259, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__33);
   __Pyx_GIVEREF(__pyx_tuple__33);
-  __pyx_codeobj__34 = (PyObject*)__Pyx_PyCode_New(5, 0, 5, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__33, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_libgrav_pyx, __pyx_n_s_get_ellipse, 256, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__34)) __PYX_ERR(0, 256, __pyx_L1_error)
+  __pyx_codeobj__34 = (PyObject*)__Pyx_PyCode_New(5, 0, 5, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__33, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_libgrav_pyx, __pyx_n_s_get_ellipse, 259, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__34)) __PYX_ERR(0, 259, __pyx_L1_error)
   __Pyx_RefNannyFinishContext();
   return 0;
   __pyx_L1_error:;
@@ -9968,83 +10005,83 @@ if (!__Pyx_RefNanny) {
  *     return a, b
  * 
  * def eccentricity(small, large, G):             # <<<<<<<<<<<<<<
- *     return c_eccentricity(small.pos, large.pos, small.vel, large.vel, 1.0, large.mass, G)
- * 
+ *     return c_eccentricity(small.pos, large.pos,
+ *                           small.vel, large.vel,
  */
   __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_7libgrav_7eccentricity, NULL, __pyx_n_s_libgrav); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 236, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_eccentricity, __pyx_t_2) < 0) __PYX_ERR(0, 236, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "libgrav.pyx":239
- *     return c_eccentricity(small.pos, large.pos, small.vel, large.vel, 1.0, large.mass, G)
+  /* "libgrav.pyx":242
+ *                           G)
  * 
  * def get_angle(vec):             # <<<<<<<<<<<<<<
  *     x_axis = np.array([1, 0]).astype(np.float64)
  *     return angle_between(vec, x_axis)
  */
-  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_7libgrav_9get_angle, NULL, __pyx_n_s_libgrav); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 239, __pyx_L1_error)
+  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_7libgrav_9get_angle, NULL, __pyx_n_s_libgrav); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 242, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_get_angle, __pyx_t_2) < 0) __PYX_ERR(0, 239, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_get_angle, __pyx_t_2) < 0) __PYX_ERR(0, 242, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "libgrav.pyx":243
+  /* "libgrav.pyx":246
  *     return angle_between(vec, x_axis)
  * 
  * def py_angle_between(v1, v2):             # <<<<<<<<<<<<<<
  *     return angle_between(v1, v2)
  * 
  */
-  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_7libgrav_11py_angle_between, NULL, __pyx_n_s_libgrav); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 243, __pyx_L1_error)
+  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_7libgrav_11py_angle_between, NULL, __pyx_n_s_libgrav); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 246, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_py_angle_between, __pyx_t_2) < 0) __PYX_ERR(0, 243, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_py_angle_between, __pyx_t_2) < 0) __PYX_ERR(0, 246, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "libgrav.pyx":246
+  /* "libgrav.pyx":249
  *     return angle_between(v1, v2)
  * 
  * def clockwise(v1, v2):             # <<<<<<<<<<<<<<
  *     return c_clockwise(v1, v2)
  * 
  */
-  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_7libgrav_13clockwise, NULL, __pyx_n_s_libgrav); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 246, __pyx_L1_error)
+  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_7libgrav_13clockwise, NULL, __pyx_n_s_libgrav); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 249, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_clockwise, __pyx_t_2) < 0) __PYX_ERR(0, 246, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_clockwise, __pyx_t_2) < 0) __PYX_ERR(0, 249, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "libgrav.pyx":249
+  /* "libgrav.pyx":252
  *     return c_clockwise(v1, v2)
  * 
  * def make_norm(vec, scale):             # <<<<<<<<<<<<<<
  *     vec /= norm(vec)
  *     vec *= scale
  */
-  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_7libgrav_15make_norm, NULL, __pyx_n_s_libgrav); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 249, __pyx_L1_error)
+  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_7libgrav_15make_norm, NULL, __pyx_n_s_libgrav); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 252, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_make_norm, __pyx_t_2) < 0) __PYX_ERR(0, 249, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_make_norm, __pyx_t_2) < 0) __PYX_ERR(0, 252, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "libgrav.pyx":253
+  /* "libgrav.pyx":256
  *     vec *= scale
  * 
  * def py_rotate(vec, angle):             # <<<<<<<<<<<<<<
  *     return rotate(vec, angle)
  * 
  */
-  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_7libgrav_17py_rotate, NULL, __pyx_n_s_libgrav); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 253, __pyx_L1_error)
+  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_7libgrav_17py_rotate, NULL, __pyx_n_s_libgrav); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 256, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_py_rotate, __pyx_t_2) < 0) __PYX_ERR(0, 253, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_py_rotate, __pyx_t_2) < 0) __PYX_ERR(0, 256, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "libgrav.pyx":256
+  /* "libgrav.pyx":259
  *     return rotate(vec, angle)
  * 
  * def get_ellipse(center, a, b, angle, num_points=100):             # <<<<<<<<<<<<<<
  *     return c_get_ellipse(center, a, b, angle, num_points)
  */
-  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_7libgrav_19get_ellipse, NULL, __pyx_n_s_libgrav); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 256, __pyx_L1_error)
+  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_7libgrav_19get_ellipse, NULL, __pyx_n_s_libgrav); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 259, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_get_ellipse, __pyx_t_2) < 0) __PYX_ERR(0, 256, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_get_ellipse, __pyx_t_2) < 0) __PYX_ERR(0, 259, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "libgrav.pyx":1
