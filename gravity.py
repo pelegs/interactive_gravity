@@ -5,131 +5,7 @@
 from sys import exit, argv
 import numpy as np
 import pygame
-
-
-###################
-# Maths functions #
-###################
-
-def normalize(vec):
-    """
-    Returns normalized vector
-    """
-    L = np.linalg.norm(vec)
-    if L != 0:
-        return vec/L
-    else:
-        return vec*0.0
-
-def scale_vec(vec, size):
-    """
-    Returns scaled to size
-    """
-    new_vec = normalize(vec)
-    return new_vec * size
-
-def get_angle(vec):
-    angle = np.arctan2(vec[1], vec[0])
-    return np.degrees(angle)
-
-def get_angle_between(v1, v2):
-    return get_angle(v1) - get_angle(v2)
-
-def rotate(vec, angle):
-    """
-    returns vector rotated by angle
-    """
-    c = np.cos(angle)
-    s = np.sin(angle)
-    mat = np.array([[c, -s],
-                    [s,  c]])
-    return np.dot(mat, vec)
-
-def intersection(x1, x2, x3, x4,
-                 y1, y2, y3, y4):
-    """
-    returns the intersection
-    point of two line segments.
-    (used for particle-wall interaction)
-    """
-    a = ((y3-y4)*(x1-x3) + (x4-x3)*(y1-y3))
-    b = ((y1-y2)*(x1-x3) + (x2-x1)*(y1-y3))
-    c = ((x4-x3)*(y1-y2) - (x1-x2)*(y4-y3))
-    p1 = np.array([x1, y1])
-    p2 = np.array([x2, y2])
-    if c != 0.0:
-        """
-        c = 0 means that the
-        intersection point exists.
-        """
-        return a/c, b/c, p1 + (p2-p1)*(a/c)
-    else:
-        return 0, 0, np.zeros(2)
-
-def dist(p1, p2):
-    """
-    returns the Euclidean distance
-    between two points p1, p2
-    """
-    return np.linalg.norm(p2-p1)
-
-def cross(v1, v2):
-    return (v1[0]*v2[1] - v1[1]*v2[0])
-
-def orbital_params(x, X, v, m, M):
-    # Distance
-    dr = x - X
-    r = dist(x, X)
-
-    # Velocity squared
-    v2 = np.dot(v, v)
-
-    # Reduced mass
-    mu = G*M
-
-    # Specific orbital energy
-    E = v2/2 - mu/r
-
-    # Specific relative angular momentum
-    h = cross(dr, v)
-
-    # Eccentricity
-    e = np.sqrt(1 + 2*E*h**2/mu**2)
-
-    # Major axis
-    a = mu*r / (2*mu - r*v2)
-
-    # Minor axis
-    b = a * np.sqrt(1-e**2)
-
-    # Position of second focus
-    perp_vec = rotate(v, np.pi/2)
-    da = get_angle_between(dr, perp_vec)
-    r2 = rotate(dr, 2*da)
-    r2 = scale_vec(r2, 2*a-r)
-    f2 = x + r2
-
-    # Angle of major axis
-    angle = get_angle(f2 - X)
-
-    return e, a, b, angle
-
-
-def get_ellipse(x, X, v, m, M,
-                center, num_points=1000):
-    e, a, b = orbital_params(x, X, v, m, M)
-    angle = get_angle(x - X)
-    points = np.zeros((num_points, 2))
-    ts = np.linspace(0, 2*np.pi, num_points)
-    for i in range(num_points):
-        c = np.cos(ts[i])
-        s = np.sin(ts[i])
-        r = 2*a*b/np.sqrt((2*b*c)**2+(a*s)**2)
-        points[i][0] = r * c
-        points[i][1] = r * s
-        points[i] = rotate(points[i], -angle) + center
-
-    return points
+from libgrav import *
 
 
 ###########
@@ -197,22 +73,23 @@ class Body:
         self.cell = (-1, -1)
         self.neighbors = []
 
-        self.ellipse_surf = None
+        self.points = np.ones((2, 2))*-1
 
     def create_ellipse(self, star):
-        e, a, b, angle = orbital_params(self.pos, star.pos,
-                                        self.vel,
-                                        self.mass, star.mass)
-        e = e
-        a = a
-        b = b
-        orbit_angle = np.degrees(angle)
+        r1 = self.pos - star.pos
+        perp_vec = py_rotate(self.vel, np.pi/2)
+        a, b = ellipse_axes(self, star, G)
+        r1_angle = np.arctan2(r1[1], r1[0])
 
-        self.focus = (star.pos[0]-a*(1+e), star.pos[1]-b)
-        new_surf = pygame.Surface((2*a, 2*b))
-        pygame.draw.ellipse(new_surf, [255, 255, 255],
-                            (0, 0, 2*a, 2*b), 3)
-        self.ellipse_surf = pygame.transform.rotate(new_surf, orbit_angle)
+        c = clockwise(r1, perp_vec)
+        da = -c*py_angle_between(r1, perp_vec)
+        r2 = -py_rotate(r1, 2*da)
+        make_norm(r2, 2*a - np.linalg.norm(r1))
+
+        second_center = self.pos + r2
+        r12_angle = get_angle(second_center - star.pos)
+        ellipse_center = 0.5*(star.pos + second_center)
+        self.points = get_ellipse(ellipse_center, a, b, r12_angle, 1000)
 
     def set_cell(self, x, y):
         self.cell = (x, y)
@@ -282,8 +159,10 @@ class Body:
         self.vel = scale_vec(self.vel, np.sqrt(2*energy/self.mass))
 
     def draw(self, surface):
-        if self.ellipse_surf:
-            surface.blit(self.ellipse_surf, self.focus)
+        for point in self.points:
+            if (0 <= point[0] <= w) and (0 <= point[1] <= h):
+                pygame.draw.circle(surface, [255, 255, 255],
+                                   point.astype(int), 1)
 
         pygame.draw.circle(surface, self.atmo_color,
                            self.pos.astype(int), self.radius + self.atmo_radius)
@@ -394,9 +273,7 @@ while run:
                 old_mouse_pos = mouse_pos
 
             if mouse_status == SET_VELOCITY:
-                new_planet.vel = np.array(mouse_pos) - new_planet.pos
                 new_planet.active = True
-                new_planet.create_ellipse(star)
 
         if event.type == pygame.MOUSEBUTTONDOWN:
             if 2 <= planet_radius <= 20:
@@ -409,27 +286,30 @@ while run:
     # Mouse position
     mouse_pos = pygame.mouse.get_pos()
 
+    # Show trajectory
+    if mouse_status == PLACE_PLANET:
+        planets[-1].vel = mouse_pos - planets[-1].pos
+        planets[-1].create_ellipse(star)
+
     # Physics
     for p in planets:
         p.gravity(star, dt)
         p.in_atmosphere(star)
-    #star.gravity(p1, dt)
 
     # Move
     for p in planets:
         p.move(dt)
         if dist(p.pos, star.pos) <= p.radius + star.radius:
             planets.remove(p)
-    #star.move(dt)
 
     # Draw
     screen.fill(3*[0])
+    star.draw(screen)
     for p in planets:
         p.draw(screen)
     draw_mouse(screen,
                old_mouse_pos=old_mouse_pos,
                width=2)
-    star.draw(screen)
 
     # Update screen
     pygame.display.update()
