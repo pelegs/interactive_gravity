@@ -176,7 +176,7 @@ class Body:
 ##################
 
 def draw_mouse(surface,
-               old_mouse_pos=None,
+               original_pos=None,
                width=2):
     if mouse_status == SET_VELOCITY:
         pygame.draw.circle(surface, [0, 200, 255],
@@ -184,7 +184,7 @@ def draw_mouse(surface,
     if mouse_status == PLACE_PLANET:
         pygame.draw.line(surface,
                          [255, 0, 0],
-                         old_mouse_pos,
+                         original_pos,
                          mouse_pos,
                          width)
 
@@ -243,7 +243,8 @@ planets = []
 run = True
 mpos = []
 frame_num = 0
-old_mouse_pos = pygame.mouse.get_pos()
+mouse_pos = (0,0)
+original_pos = (0,0)
 while run:
     # Input events
     for event in pygame.event.get():
@@ -270,7 +271,7 @@ while run:
                                   color = [0, 200, 255],
                                   active = False)
                 planets.append(new_planet)
-                old_mouse_pos = mouse_pos
+                original_pos = new_planet.pos
 
             if mouse_status == SET_VELOCITY:
                 new_planet.active = True
@@ -284,12 +285,13 @@ while run:
 
 
     # Mouse position
+    old_mouse_pos = mouse_pos
     mouse_pos = pygame.mouse.get_pos()
 
     # Show trajectory
-    if mouse_status == PLACE_PLANET:
-        planets[-1].vel = mouse_pos - planets[-1].pos
-        planets[-1].create_ellipse(star)
+    if mouse_status == PLACE_PLANET and mouse_pos != old_mouse_pos:
+        new_planet.vel = mouse_pos - new_planet.pos
+        new_planet.create_ellipse(star)
 
     # Physics
     for p in planets:
@@ -308,7 +310,7 @@ while run:
     for p in planets:
         p.draw(screen)
     draw_mouse(screen,
-               old_mouse_pos=old_mouse_pos,
+               original_pos=original_pos,
                width=2)
 
     # Update screen

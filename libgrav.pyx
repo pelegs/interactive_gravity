@@ -27,7 +27,10 @@ cdef int c_clockwise(np.ndarray[double, ndim=1] v1,
 
 cdef double angle_between(np.ndarray[double, ndim=1] v1,
                           np.ndarray[double, ndim=1] v2):
-    return acos(dot(v1, v2) / (norm(v1)*norm(v2)))
+    if norm(v1) == 0 or norm(v2) == 0:
+        return 0.0
+    else:
+        return acos(dot(v1, v2) / (norm(v1)*norm(v2)))
 
 
 cdef double dot(np.ndarray[double, ndim=1] v1,
