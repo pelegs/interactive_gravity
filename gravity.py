@@ -4,6 +4,7 @@
 
 from sys import exit, argv
 import numpy as np
+from numpy import sqrt, sin, cos, pi
 import pygame
 from libgrav import *
 
@@ -74,25 +75,58 @@ class Body:
         self.neighbors = []
 
         self.points = np.ones((2, 2))*-1
-        self.eccentricity = -1
+        self.e, self.a, self.b = [-1]*3
+        self.ellipse_surface = None
 
-    def create_ellipse(self, star):
-        self.eccentricity = eccentricity(self, star, G)
+    def set_orbital_params(self, star):
+        self.star = star
+        self.e, self.a, self.b = orbital_params(self, star, G)
+        self.ellipse_surface = None
 
+    def create_ellipse(self):
         r1 = self.pos - star.pos
         perp_vec = py_rotate(self.vel, np.pi/2)
-        a, b = ellipse_axes(self, star, G)
         r1_angle = np.arctan2(r1[1], r1[0])
 
-        c = clockwise(r1, perp_vec)
-        da = -c*py_angle_between(r1, perp_vec)
+        #c = clockwise(r1, perp_vec)
+        da = -py_angle_between(r1, perp_vec)
         r2 = -py_rotate(r1, 2*da)
-        make_norm(r2, 2*a - np.linalg.norm(r1))
+        make_norm(r2, 2*self.a - np.linalg.norm(r1))
 
         second_center = self.pos + r2
-        r12_angle = get_angle(second_center - star.pos)
-        ellipse_center = 0.5*(star.pos + second_center)
-        self.points = get_ellipse(ellipse_center, a, b, r12_angle, 300)
+        self.r12_angle_rad = get_angle(second_center - star.pos)
+        self.r12_angle_deg = np.degrees(self.r12_angle_rad)
+
+        if 0 <= self.a <= w and 0 <= self.b <= h:
+            self.ellipse_surface = pygame.Surface((2*self.a, 2*self.b))
+            self.ellipse_surface.fill([0, 0, 0])
+            self.ellipse_surface.set_colorkey([0, 0, 0])
+
+            pygame.draw.circle(self.ellipse_surface,
+                               [0, 255, 150],
+                               np.array([self.a*(1+self.e), self.b]).astype(int),
+                               5)
+            pygame.draw.circle(self.ellipse_surface,
+                               [255, 0, 0],
+                               np.array([self.a*(1-self.e), self.b]).astype(int),
+                               5)
+
+            # Avoid radius being smaller than width
+            if self.a <= 1 or self.b <= 1:
+                pygame.draw.line(self.ellipse_surface,
+                                 [255, 255, 255],
+                                 (0, self.b),
+                                 (2*self.a, self.b),
+                                 1)
+            # Normal operation
+            else:
+                pygame.draw.ellipse(self.ellipse_surface,
+                                    [255, 255, 255],
+                                    (0, 0, 2*self.a, 2*self.b),
+                                    1)
+
+            # Transform to fit shape
+            self.ellipse_surface = pygame.transform.rotate(self.ellipse_surface, -self.r12_angle_deg)
 
     def set_cell(self, x, y):
         self.cell = (x, y)
@@ -162,13 +196,20 @@ class Body:
         self.vel = scale_vec(self.vel, np.sqrt(2*energy/self.mass))
 
     def draw(self, surface):
-        for point in self.points:
-            if (0 <= point[0] <= w) and (0 <= point[1] <= h):
-                pygame.draw.circle(surface, [255, 255, 255],
-                                   point.astype(int), 1)
+        # Draw trajectory
+        if self.ellipse_surface is not None:
+            edge_correction = np.array(self.ellipse_surface.get_size()) * 0.5
+            angle = pi - self.r12_angle_rad
+            focus_correction = np.array([cos(-angle), sin(-angle)]) * self.a*self.e
+            pos = self.star.pos - edge_correction - focus_correction
+            surface.blit(self.ellipse_surface, pos.astype(int))
 
-        pygame.draw.circle(surface, self.atmo_color,
-                           self.pos.astype(int), self.radius + self.atmo_radius)
+        # Draw atmosphere
+        if self.atmo_radius >= 0.0:
+            pygame.draw.circle(surface, self.atmo_color,
+                               self.pos.astype(int), self.radius + self.atmo_radius)
+
+        # Draw self
         pygame.draw.circle(surface, self.color,
                            self.pos.astype(int), self.radius)
 
@@ -306,8 +347,9 @@ while run:
     # Show trajectory
     if mouse_status == PLACE_PLANET and mouse_pos != old_mouse_pos:
         new_planet.vel = mouse_pos - new_planet.pos
-        new_planet.create_ellipse(star)
-        eccentricity_val = new_planet.eccentricity
+        new_planet.set_orbital_params(star)
+        new_planet.create_ellipse()
+        eccentricity_val = new_planet.e
 
     # Physics
     for p in planets:

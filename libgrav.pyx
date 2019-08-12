@@ -140,11 +140,11 @@ cdef double kinetic_energy(np.ndarray[double, ndim=1] v,
     return 0.5 * m * dot(v, v)
 
 
-cdef double c_eccentricity(np.ndarray[double, ndim=1] small_pos,
-                           np.ndarray[double, ndim=1] large_pos,
-                           np.ndarray[double, ndim=1] small_vel,
-                           np.ndarray[double, ndim=1] large_vel,
-                           double M, double m, double G):
+cdef np.ndarray[double, ndim=1] c_orbital_params(np.ndarray[double, ndim=1] small_pos,
+                                                 np.ndarray[double, ndim=1] large_pos,
+                                                 np.ndarray[double, ndim=1] small_vel,
+                                                 np.ndarray[double, ndim=1] large_vel,
+                                                 double M, double m, double G):
     # distance
     cdef double r = c_dist(small_pos, large_pos)
     cdef np.ndarray[double, ndim=1] r_vec = small_pos - large_pos
@@ -165,37 +165,21 @@ cdef double c_eccentricity(np.ndarray[double, ndim=1] small_pos,
     # Specific relative angular momentum
     cdef double h = cross(r_vec, small_vel)
 
-    return sqrt(1 + 2*E*h**2/mu**2)
+    # Eccentricity
+    cdef double e = sqrt(1 + 2*E*h**2/mu**2)
 
+    # Semi majot axis
+    cdef double a = -mu/(2*E)
 
-cdef double c_a(np.ndarray[double, ndim=1] small_pos,
-                np.ndarray[double, ndim=1] large_pos,
-                np.ndarray[double, ndim=1] small_vel,
-                np.ndarray[double, ndim=1] large_vel,
-                double M, double m, double G):
-    # distance
-    cdef double r = c_dist(small_pos, large_pos)
+    # Semi minor axis
+    cdef double b = a * sqrt(1-e**2)
 
-    # Velocity^2
-    cdef np.ndarray[double, ndim=1] v_vec = small_vel - large_vel
-    cdef double v2 = dot(v_vec, v_vec)
-
-    # Reduced mass
-    cdef double mu = G*(m+M)
-
-    # Specific orbital energy
-    cdef double E = 0.5*v2 - mu/r
-
-    return -mu/(2*E)
-
-cdef double c_b(np.ndarray[double, ndim=1] small_pos,
-                 np.ndarray[double, ndim=1] large_pos,
-                 np.ndarray[double, ndim=1] small_vel,
-                 np.ndarray[double, ndim=1] large_vel,
-                 double M, double m, double G):
-    cdef double e = c_eccentricity(small_pos, large_pos, small_vel, large_vel, M, m, G)
-    cdef double a = 0.5 * c_a(small_pos, large_pos, small_vel, large_vel, M, m, G)
-    return a * sqrt(1-e**2)
+    # Return
+    cdef np.ndarray[double, ndim=1] returned_vec = np.zeros(3).astype(np.float64)
+    returned_vec[0] = e
+    returned_vec[1] = a
+    returned_vec[2] = b
+    return returned_vec
 
 
 cdef np.ndarray[double, ndim=2] c_get_ellipse(np.ndarray[double, ndim=1] center,
@@ -228,20 +212,12 @@ def normalize(vec):
 def dist(v1, v2):
     return c_dist(v1, v2)
 
-def ellipse_axes(small, large, G):
-    a = c_a(small.pos, large.pos, small.vel, large.vel, 1.0, large.mass, G)
-    b = c_b(small.pos, large.pos, small.vel, large.vel, 1.0, large.mass, G)
-    return a, b
-
-def eccentricity(small, large, G):
-    return c_eccentricity(small.pos, large.pos,
-                          small.vel, large.vel,
-                          small.mass, large.mass,
-                          G)
-
-def get_angle(vec):
+def get_angle(vec, deg=False):
     x_axis = np.array([1, 0]).astype(np.float64)
-    return angle_between(vec, x_axis)
+    if deg:
+        return np.degrees(angle_between(vec, x_axis))
+    else:
+        return angle_between(vec, x_axis)
 
 def py_angle_between(v1, v2):
     return angle_between(v1, v2)
@@ -255,6 +231,12 @@ def make_norm(vec, scale):
 
 def py_rotate(vec, angle):
     return rotate(vec, angle)
+
+def orbital_params(planet, star, G):
+    return c_orbital_params(planet.pos, star.pos,
+                            planet.vel, star.vel,
+                            planet.mass, star.mass,
+                            G)
 
 def get_ellipse(center, a, b, angle, num_points=100):
     return c_get_ellipse(center, a, b, angle, num_points)
