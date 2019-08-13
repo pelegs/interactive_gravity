@@ -12,6 +12,9 @@ import pygame
 CW = 1
 CCW = -1
 
+x_axis = np.array([1, 0]).astype(float)
+y_axis = np.array([0, 1]).astype(float)
+
 
 ###############
 # c functions #
@@ -36,6 +39,15 @@ cdef double angle_between(np.ndarray[double, ndim=1] v1,
 cdef double dot(np.ndarray[double, ndim=1] v1,
                 np.ndarray[double, ndim=1] v2):
     return v1[0]*v2[0] + v1[1]*v2[1]
+
+
+cdef np.ndarray[double, ndim=1] get_vec(double R,
+                                        double t):
+    # Return a vector of norm R and angle t to x-axis
+    cdef np.ndarray[double, ndim=1] vec = np.zeros(2).astype(np.float64)
+    vec[0] = R * cos(t)
+    vec[1] = R * sin(t)
+    return vec
 
 
 cdef double cross(np.ndarray[double, ndim=1] v1,
@@ -140,17 +152,17 @@ cdef double kinetic_energy(np.ndarray[double, ndim=1] v,
     return 0.5 * m * dot(v, v)
 
 
-cdef np.ndarray[double, ndim=1] c_orbital_params(np.ndarray[double, ndim=1] small_pos,
-                                                 np.ndarray[double, ndim=1] large_pos,
-                                                 np.ndarray[double, ndim=1] small_vel,
-                                                 np.ndarray[double, ndim=1] large_vel,
-                                                 double M, double m, double G):
+cdef np.ndarray[double, ndim=1] c_orbital_params(np.ndarray[double, ndim=1] planet_pos,
+                                                 np.ndarray[double, ndim=1] star_pos,
+                                                 np.ndarray[double, ndim=1] planet_vel,
+                                                 np.ndarray[double, ndim=1] star_vel,
+                                                 double m, double M, double G):
     # distance
-    cdef double r = c_dist(small_pos, large_pos)
-    cdef np.ndarray[double, ndim=1] r_vec = small_pos - large_pos
+    cdef double r = c_dist(planet_pos, star_pos)
+    cdef np.ndarray[double, ndim=1] r_vec = planet_pos - star_pos
 
     # Velocity^2
-    cdef np.ndarray[double, ndim=1] v_vec = small_vel - large_vel
+    cdef np.ndarray[double, ndim=1] v_vec = planet_vel - star_vel
     cdef double v2 = dot(v_vec, v_vec)
 
     # Reduced mass
@@ -163,28 +175,48 @@ cdef np.ndarray[double, ndim=1] c_orbital_params(np.ndarray[double, ndim=1] smal
     cdef double sgp = G * M
 
     # Specific relative angular momentum
-    cdef double h = cross(r_vec, small_vel)
+    cdef double h = cross(r_vec, planet_vel)
 
     # Eccentricity
     cdef double e = sqrt(1 + 2*E*h**2/mu**2)
 
-    # Semi majot axis
+    # Semi major axis
     cdef double a = -mu/(2*E)
 
-    # Semi minor axis
-    cdef double b = a * sqrt(1-e**2)
-
     # Return
-    cdef np.ndarray[double, ndim=1] returned_vec = np.zeros(3).astype(np.float64)
+    cdef np.ndarray[double, ndim=1] returned_vec = np.zeros(2).astype(np.float64)
     returned_vec[0] = e
     returned_vec[1] = a
-    returned_vec[2] = b
     return returned_vec
 
 
+cdef double c_get_ellipse_angle(np.ndarray[double, ndim=1] planet_pos,
+                                np.ndarray[double, ndim=1] star_pos,
+                                double a, double e):
+    # Distance and angle from planet to star
+    cdef double r = c_dist(planet_pos, star_pos)
+    cdef double phi = angle_between(star_pos, planet_pos)
+
+    # Distance between planet and f2
+    cdef double d = 2*a - r
+
+    # Angle between planet-star line and planet-f2 line
+    cdef double theta = acos((r**2 + d**2 - (2*a*e)**2)/(2*r*d))
+
+    # Position of f2
+    cdef np.ndarray[double, ndim=1] d_vec = get_vec(d, theta + phi)
+    cdef np.ndarray[double, ndim=1] f2 = planet_pos + d_vec
+
+    # Get angle of f2-star line
+    cdef double angle_f2_star = angle_between(star_pos - f2, x_axis)
+
+    return angle_f2_star
+
+
 cdef np.ndarray[double, ndim=2] c_get_ellipse(np.ndarray[double, ndim=1] center,
-                                              double a, double b, double angle,
+                                              double a, double e, double angle,
                                               int num_points):
+    cdef double b = a * sqrt(1-e**2)
     cdef np.ndarray[double, ndim=1] ts = np.linspace(0, 2*pi, num_points).astype(np.float64)
     cdef np.ndarray[double, ndim=2] points = np.zeros(shape=(num_points, 2))
     cdef double r
@@ -237,6 +269,9 @@ def orbital_params(planet, star, G):
                             planet.vel, star.vel,
                             planet.mass, star.mass,
                             G)
+
+def get_ellipse_angle(planet_pos, star_pos, a, e):
+    return c_get_ellipse_angle(planet_pos, star_pos, a, e)
 
 def get_ellipse(center, a, b, angle, num_points=100):
     return c_get_ellipse(center, a, b, angle, num_points)

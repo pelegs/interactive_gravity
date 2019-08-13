@@ -74,59 +74,20 @@ class Body:
         self.cell = (-1, -1)
         self.neighbors = []
 
-        self.points = np.ones((2, 2))*-1
+        self.points = None
         self.e, self.a, self.b = [-1]*3
-        self.ellipse_surface = None
+        self.star = None
 
     def set_orbital_params(self, star):
         self.star = star
-        self.e, self.a, self.b = orbital_params(self, star, G)
-        self.ellipse_surface = None
+        self.e, self.a = orbital_params(self, star, G)
+        self.b = self.a * sqrt(1-self.e**2)
 
     def create_ellipse(self):
-        r1 = self.pos - star.pos
-        perp_vec = py_rotate(self.vel, np.pi/2)
-        r1_angle = np.arctan2(r1[1], r1[0])
-
-        #c = clockwise(r1, perp_vec)
-        da = -py_angle_between(r1, perp_vec)
-        r2 = -py_rotate(r1, 2*da)
-        make_norm(r2, 2*self.a - np.linalg.norm(r1))
-
-        second_center = self.pos + r2
-        self.r12_angle_rad = get_angle(second_center - star.pos)
-        self.r12_angle_deg = np.degrees(self.r12_angle_rad)
-
-        if 0 <= self.a <= w and 0 <= self.b <= h:
-            self.ellipse_surface = pygame.Surface((2*self.a, 2*self.b))
-            self.ellipse_surface.fill([0, 0, 0])
-            self.ellipse_surface.set_colorkey([0, 0, 0])
-
-            pygame.draw.circle(self.ellipse_surface,
-                               [0, 255, 150],
-                               np.array([self.a*(1+self.e), self.b]).astype(int),
-                               5)
-            pygame.draw.circle(self.ellipse_surface,
-                               [255, 0, 0],
-                               np.array([self.a*(1-self.e), self.b]).astype(int),
-                               5)
-
-            # Avoid radius being smaller than width
-            if self.a <= 1 or self.b <= 1:
-                pygame.draw.line(self.ellipse_surface,
-                                 [255, 255, 255],
-                                 (0, self.b),
-                                 (2*self.a, self.b),
-                                 1)
-            # Normal operation
-            else:
-                pygame.draw.ellipse(self.ellipse_surface,
-                                    [255, 255, 255],
-                                    (0, 0, 2*self.a, 2*self.b),
-                                    1)
-
-            # Transform to fit shape
-            self.ellipse_surface = pygame.transform.rotate(self.ellipse_surface, -self.r12_angle_deg)
+        angle = get_ellipse_angle(self.pos, self.star.pos,
+                                  self.a, self.e)
+        center = self.star.pos - np.array([self.a*self.e, 0.0])
+        self.points = get_ellipse(center, self.a, self.e, 0)
 
     def set_cell(self, x, y):
         self.cell = (x, y)
@@ -197,12 +158,14 @@ class Body:
 
     def draw(self, surface):
         # Draw trajectory
-        if self.ellipse_surface is not None:
-            edge_correction = np.array(self.ellipse_surface.get_size()) * 0.5
-            angle = pi - self.r12_angle_rad
-            focus_correction = np.array([cos(-angle), sin(-angle)]) * self.a*self.e
-            pos = self.star.pos - edge_correction - focus_correction
-            surface.blit(self.ellipse_surface, pos.astype(int))
+        if self.points is not None:
+            pass
+            #for point in self.points:
+            #    if 0 <= point[0] <= w and 0 <= point[1] <= h:
+            #        pygame.draw.circle(surface,
+            #                           [255]*3,
+            #                           point.astype(int),
+            #                           2)
 
         # Draw atmosphere
         if self.atmo_radius >= 0.0:
