@@ -20,6 +20,14 @@ y_axis = np.array([0, 1]).astype(float)
 # c functions #
 ###############
 
+cdef np.ndarray[double, ndim=1] rotate(np.ndarray[double, ndim=1] vec,
+                                       double angle):
+    # Returns vec rotated by angle (ccw)
+    cdef np.ndarray[double, ndim=2] rot_matrix = np.array([[cos(angle), -sin(angle)],
+                                                           [sin(angle),  cos(angle)]]).astype(np.float64)
+    return np.dot(rot_matrix, vec)
+
+
 cdef int c_clockwise(np.ndarray[double, ndim=1] v1,
                      np.ndarray[double, ndim=1] v2):
     if v1[1]*v2[0] >= v1[0]*v2[1]:
@@ -28,18 +36,24 @@ cdef int c_clockwise(np.ndarray[double, ndim=1] v1,
         return CCW
 
 
-cdef double angle_between(np.ndarray[double, ndim=1] v1,
-                          np.ndarray[double, ndim=1] v2):
+cdef double dot(np.ndarray[double, ndim=1] v1,
+                np.ndarray[double, ndim=1] v2):
+    # Returns the dot product of vectors v1 and v2
+    return v1[0]*v2[0] + v1[1]*v2[1]
+
+
+cdef double c_angle_between(np.ndarray[double, ndim=1] v1,
+                            np.ndarray[double, ndim=1] v2):
+    # Returns angle between vectors v1 and v2
     if norm(v1) == 0 or norm(v2) == 0:
         return 0.0
     else:
         return acos(dot(v1, v2) / (norm(v1)*norm(v2)))
 
 
-cdef double dot(np.ndarray[double, ndim=1] v1,
-                np.ndarray[double, ndim=1] v2):
-    return v1[0]*v2[0] + v1[1]*v2[1]
-
+cdef double c_angle_to_xaxis(np.ndarray[double, ndim=1] vec):
+    # Return SIGNED angle between vec and x-axis
+    return atan2(vec[1], vec[0])
 
 cdef np.ndarray[double, ndim=1] get_vec(double R,
                                         double t):
@@ -52,15 +66,7 @@ cdef np.ndarray[double, ndim=1] get_vec(double R,
 
 cdef double cross(np.ndarray[double, ndim=1] v1,
                   np.ndarray[double, ndim=1] v2):
-    cdef double theta = angle_between(v1, v2)
-    return norm(v1) * norm(v2) * sin(theta)
-
-
-cdef double get_xy_angle(np.ndarray[double, ndim=1] vec):
-    angle = atan2(vec[1], vec[0])
-    if angle < 0:
-        angle += 2*pi
-    return angle
+    return v1[0]*v2[1] - v1[1]*v2[0] 
 
 
 cdef double rad2deg(double angle):
@@ -69,23 +75,6 @@ cdef double rad2deg(double angle):
 
 cdef double deg2rad(double angle):
     return angle * pi/180
-
-
-cdef np.ndarray[double, ndim=1] mat_vec_dot(np.ndarray[double, ndim=2] matrix,
-                                            np.ndarray[double, ndim=1] vec):
-    cdef np.ndarray[double, ndim=1] v_new = np.zeros(2).astype(np.float64)
-    v_new[0] = dot(matrix[0], vec)
-    v_new[1] = dot(matrix[1], vec)
-    return v_new
-
-
-cdef np.ndarray[double, ndim=1] rotate(np.ndarray[double, ndim=1] vec,
-                                       double angle):
-    cdef double s = sin(angle)
-    cdef double c = cos(angle)
-    cdef np.ndarray[double, ndim=2] R_matrix = np.array([[c, -s],
-                                                         [+s, c]])
-    return mat_vec_dot(R_matrix, vec)
 
 
 cdef double norm(np.ndarray[double, ndim=1] vec):
@@ -183,10 +172,14 @@ cdef np.ndarray[double, ndim=1] c_orbital_params(np.ndarray[double, ndim=1] plan
     # Semi major axis
     cdef double a = -mu/(2*E)
 
+    # Semi minor axis
+    cdef double b = a * sqrt(1-e**2)
+
     # Return
-    cdef np.ndarray[double, ndim=1] returned_vec = np.zeros(2).astype(np.float64)
+    cdef np.ndarray[double, ndim=1] returned_vec = np.zeros(3).astype(np.float64)
     returned_vec[0] = e
     returned_vec[1] = a
+    returned_vec[2] = b
     return returned_vec
 
 
@@ -195,7 +188,7 @@ cdef double c_get_ellipse_angle(np.ndarray[double, ndim=1] planet_pos,
                                 double a, double e):
     # Distance and angle from planet to star
     cdef double r = c_dist(planet_pos, star_pos)
-    cdef double phi = angle_between(star_pos, planet_pos)
+    cdef double phi = c_angle_to_xaxis(star_pos - planet_pos)
 
     # Distance between planet and f2
     cdef double d = 2*a - r
@@ -204,33 +197,26 @@ cdef double c_get_ellipse_angle(np.ndarray[double, ndim=1] planet_pos,
     cdef double theta = acos((r**2 + d**2 - (2*a*e)**2)/(2*r*d))
 
     # Position of f2
-    cdef np.ndarray[double, ndim=1] d_vec = get_vec(d, theta + phi)
+    cdef np.ndarray[double, ndim=1] d_vec = get_vec(d, phi+theta)
     cdef np.ndarray[double, ndim=1] f2 = planet_pos + d_vec
 
     # Get angle of f2-star line
-    cdef double angle_f2_star = angle_between(star_pos - f2, x_axis)
+    cdef double angle_f2_star = c_angle_between(x_axis, star_pos - f2)
 
     return angle_f2_star
 
 
 cdef np.ndarray[double, ndim=2] c_get_ellipse(np.ndarray[double, ndim=1] center,
-                                              double a, double e, double angle,
-                                              int num_points):
-    cdef double b = a * sqrt(1-e**2)
+                                              double a, double b, double e,
+                                              double angle, int num_points):
     cdef np.ndarray[double, ndim=1] ts = np.linspace(0, 2*pi, num_points).astype(np.float64)
     cdef np.ndarray[double, ndim=2] points = np.zeros(shape=(num_points, 2))
-    cdef double r
+    cdef np.ndarray[double, ndim=1] f1_transformed = center - a*e*np.array([cos(angle), sin(angle)]).astype(np.float64)
     cdef int i
     for i in range(num_points):
-        c = cos(ts[i])
-        s = sin(ts[i])
-        if (2*b*c)**2+(a*s)**2 != 0:
-            r = 2*a*b/sqrt((2*b*c)**2+(a*s)**2)
-        else:
-            r = 0.0
-        points[i][0] = r * c
-        points[i][1] = r * s
-        points[i] = rotate(points[i], angle) + center
+        points[i][0] = a * cos(ts[i])
+        points[i][1] = b * sin(ts[i])
+        points[i] = rotate(points[i], angle) + f1_transformed
     return points
 
 
@@ -244,15 +230,8 @@ def normalize(vec):
 def dist(v1, v2):
     return c_dist(v1, v2)
 
-def get_angle(vec, deg=False):
-    x_axis = np.array([1, 0]).astype(np.float64)
-    if deg:
-        return np.degrees(angle_between(vec, x_axis))
-    else:
-        return angle_between(vec, x_axis)
-
-def py_angle_between(v1, v2):
-    return angle_between(v1, v2)
+def angle_between(v1, v2):
+    return c_angle_between(v1, v2)
 
 def clockwise(v1, v2):
     return c_clockwise(v1, v2)
@@ -273,5 +252,5 @@ def orbital_params(planet, star, G):
 def get_ellipse_angle(planet_pos, star_pos, a, e):
     return c_get_ellipse_angle(planet_pos, star_pos, a, e)
 
-def get_ellipse(center, a, b, angle, num_points=100):
-    return c_get_ellipse(center, a, b, angle, num_points)
+def get_ellipse(center, a, b, e, angle, num_points=100):
+    return c_get_ellipse(center, a, b, e, angle, num_points)

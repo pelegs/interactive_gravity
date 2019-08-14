@@ -80,14 +80,13 @@ class Body:
 
     def set_orbital_params(self, star):
         self.star = star
-        self.e, self.a = orbital_params(self, star, G)
-        self.b = self.a * sqrt(1-self.e**2)
+        self.e, self.a, self.b = orbital_params(self, star, G)
 
     def create_ellipse(self):
         angle = get_ellipse_angle(self.pos, self.star.pos,
                                   self.a, self.e)
-        center = self.star.pos - np.array([self.a*self.e, 0.0])
-        self.points = get_ellipse(center, self.a, self.e, 0)
+        #center = self.star.pos - np.array([self.a*self.e, 0.0])
+        self.points = get_ellipse(self.star.pos, self.a, self.b, self.e, -angle)
 
     def set_cell(self, x, y):
         self.cell = (x, y)
@@ -158,14 +157,11 @@ class Body:
 
     def draw(self, surface):
         # Draw trajectory
-        if self.points is not None:
-            pass
-            #for point in self.points:
-            #    if 0 <= point[0] <= w and 0 <= point[1] <= h:
-            #        pygame.draw.circle(surface,
-            #                           [255]*3,
-            #                           point.astype(int),
-            #                           2)
+        if self.star is not None:
+            for point in self.points:
+                if 0 <= point[0] <= w and 0 <= point[1] <= h:
+                    pygame.draw.circle(surface, [255]*3, point.astype(int), 2)
+
 
         # Draw atmosphere
         if self.atmo_radius >= 0.0:
